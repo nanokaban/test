@@ -30,6 +30,7 @@ public class Parse_User : MonoBehaviour
         DontDestroyOnLoad(this);
 
         _audio = GameObject.Find("Canvas").GetComponent<AudioSource>();
+
     }
     private IEnumerator SignUp(string _username)
     {
@@ -82,15 +83,12 @@ public class Parse_User : MonoBehaviour
         }
     }
 
-    public  IEnumerator SaveValue(float newScaleA, float newScaleB, float newScaleX, float newScaleY, int currentV)
+    public IEnumerator SaveValue(string s, float newValue)
     {
         var user = ParseUser.CurrentUser;
         print(user.Username);
-        user["scale_A"] = newScaleA;
-        user["scale_B"] = newScaleB;
-        user["scale_X"] = newScaleX;
-        user["scale_X"] = newScaleY;
-        user["lastV"] = currentV;
+        user[s] = newValue;
+        
 
         var userSaveTask = user.SaveAsync();
 

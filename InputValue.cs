@@ -53,16 +53,20 @@ public class InputValue : MonoBehaviour
            slider_Y.value = scale_Y;
         }
 
+        StartCoroutine(_parse_User.SaveValue("lastV", lastV));
+
     }
 
     public void Input_X()
     {
         scale_X = slider_X.value;
+        StartCoroutine(_parse_User.SaveValue("scale_X", scale_X));
     }
 
     public void Input_Y()
     {
         scale_Y = slider_Y.value;
+        StartCoroutine(_parse_User.SaveValue("scale_Y", scale_Y));
     }
     
     void OnGUI()
@@ -80,6 +84,7 @@ public class InputValue : MonoBehaviour
                 if (inputField_A.isFocused && inputField_A.text != "" && Input.GetKey(KeyCode.Return))
                 {
                     scale_A = newLength_A;
+                    StartCoroutine(_parse_User.SaveValue("scale_A", scale_A)); 
                 }
             }
             else
@@ -100,6 +105,7 @@ public class InputValue : MonoBehaviour
                 if (inputField_B.isFocused && inputField_B.text != "" && Input.GetKey(KeyCode.Return))
                 {
                     scale_B = newLength_B;
+                    StartCoroutine(_parse_User.SaveValue("scale_B", scale_B));
                 }
             }
             else
@@ -108,7 +114,6 @@ public class InputValue : MonoBehaviour
             }
         }
 
-        //StartCoroutine(Parse_User.SaveValue(scale_A)); //???????? + lastV
     }
 
 }
