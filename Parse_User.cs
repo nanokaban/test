@@ -17,7 +17,7 @@ public class Parse_User : MonoBehaviour
 
     public InputField InputField;
     private AudioSource _audio;
-    private string _username = "";
+    private string username = "";
     private bool isFirst = true;
 
     void Start()
@@ -26,85 +26,91 @@ public class Parse_User : MonoBehaviour
         {
             ParseUser.LogOut();
         }*/
-   
+
         DontDestroyOnLoad(this);
-
         _audio = GameObject.Find("Canvas").GetComponent<AudioSource>();
-
     }
-    private IEnumerator SignUp(string _username)
+
+    private void SignUp(string username)
     {
-        var user = new ParseUser()
+        ParseUser user = new ParseUser()
         {
-            Username = _username,
-            Password = _username,
-            Email = _username + "@gmail.com"
+            Username = username,
+            Password = username,
         };
-        
-        var task = user.SignUpAsync();
 
-        while (!task.IsCompleted && !task.IsFaulted)
-            yield return null;
-        Debug.Log("User registered! Log in...");
+        user.SignUpAsync().ContinueWith(signUpTask =>
+        {
+            if (signUpTask.IsFaulted || signUpTask.IsCanceled)
+            {
+                // The signUp failed. 
+                Debug.Log("Sign up failed. This might be because: " + signUpTask.Exception.Message);
+            }
+            else
+            {
+                // signUp was successful.
+                Debug.Log("New user registered!");
 
-        scale_A = 1f;
-        scale_B = 1f;
-        scale_X = 1f;
-        scale_Y = 1f;
-        lastV = 1f;
+                user["scale_A"] = 1;
+                user["scale_B"] = 1;
+                user["scale_X"] = 1;
+                user["scale_Y"] = 1;
+                user["lastV"] = 1;
+                user.SaveAsync();
+            }
+        });
     }
 
-    private IEnumerator Login(string _username)
+    private void Login(string username)
     {
         isFirst = false;
-        var loginTask = ParseUser.LogInAsync(_username, _username);
-
-        while (!loginTask.IsCompleted && !loginTask.IsFaulted)
-            yield return null; 
-
-        if (loginTask.IsFaulted || loginTask.IsCanceled)
+        ParseUser.LogInAsync(username, username).ContinueWith(loginTask =>
         {
-            // The login failed. 
-            Debug.Log("id not found, creating new id");
-            StartCoroutine(SignUp(_username));
+            if (loginTask.IsFaulted || loginTask.IsCanceled)
+            {
+                // The login failed. 
+                Debug.Log("ID not found, creating new ID");
+                SignUp(username);
+            }
+            else
+            {
+                // Login was successful.
+                ParseUser user = loginTask.Result;
+
+                Debug.Log("Successfully logged in as user " + user.Username);
+
+                scale_A = user.Get<float>("scale_A");
+                scale_B = user.Get<float>("scale_B");
+                scale_X = user.Get<float>("scale_X");
+                scale_Y = user.Get<float>("scale_Y");
+                lastV = user.Get<float>("lastV");
+            }
+        });
+    }
+
+    public void SaveValue(string s, float newValue)
+    {
+        var user = ParseUser.CurrentUser;
+        user[s] = newValue;
+
+        var SaveTask = user.SaveAsync();
+
+        if (SaveTask.IsFaulted || SaveTask.IsCanceled)
+        {
+            Debug.Log("Save failed. This might be because: " + SaveTask.Exception.Message);
         }
         else
         {
-            // Login was successful.
-            ParseUser user = loginTask.Result;
-         
-            Debug.Log("Successfully logged in as user " + user.Username);
-
-            scale_A = user.Get<float>("scale_A");
-            scale_B = user.Get<float>("scale_B");
-            scale_X = user.Get<float>("scale_X");
-            scale_Y = user.Get<float>("scale_Y");
-            lastV = user.Get<float>("lastV");
+            Debug.Log("New value saved!");
         }
-    }
-
-    public IEnumerator SaveValue(string s, float newValue)
-    {
-        var user = ParseUser.CurrentUser;
-        print(user.Username);
-        user[s] = newValue;
-        
-
-        var userSaveTask = user.SaveAsync();
-
-        while (!userSaveTask.IsCompleted)
-            yield return null;
-
-        Debug.Log("New value saved!");
-
     }
 
     void OnGUI()
     {
         if (InputField.isFocused && InputField.text != "" && Input.GetKey(KeyCode.Return) && isFirst)
         {
-            _username = InputField.text;
-            StartCoroutine(Login(_username));
+            username = InputField.text;
+            Login(username);
         }
     }
 
@@ -115,8 +121,8 @@ public class Parse_User : MonoBehaviour
 
         if ( numVButton >= lastV )
         {
-            //if (ParseUser.CurrentUser != null) //???
-            if (_username != "")
+            //if (ParseUser.CurrentUser != null) ???
+            if (username != "")
             {
                 Application.LoadLevel(1);
             }
@@ -127,7 +133,7 @@ public class Parse_User : MonoBehaviour
         }
         else
         {
-            Debug.Log("Only new version");
+            Debug.Log("Error: you can not use an older version");
         }
 
     }

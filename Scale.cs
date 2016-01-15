@@ -6,8 +6,8 @@ public class Scale : MonoBehaviour {
 
     public GameObject[] Cubes;
 
-    private Parse_User _parse_User;
-    InputValue inputValue;
+    private Parse_User parseUser;
+    private InputValue inputValue;
 
     private GameObject inputField_A;
     private GameObject inputField_B;
@@ -15,7 +15,7 @@ public class Scale : MonoBehaviour {
     private GameObject slider_Y;
 
     void Awake () {
-        _parse_User = GameObject.Find("Parse_User").GetComponent<Parse_User>();
+        parseUser = GameObject.Find("Parse_User").GetComponent<Parse_User>();
         inputValue = GameObject.Find("Canvas").GetComponent<InputValue>();
 
         inputField_A = GameObject.Find("InputField_A");
@@ -23,7 +23,7 @@ public class Scale : MonoBehaviour {
         slider_X = GameObject.Find("Slider_X");
         slider_Y = GameObject.Find("Slider_Y");
 
-        switch (_parse_User.numVButton)
+        switch (parseUser.numVButton)
         {
             case 1:
                 Version_1();
@@ -39,7 +39,7 @@ public class Scale : MonoBehaviour {
 
     void Update()
     {
-        if (_parse_User.numVButton != 3)
+        if (parseUser.numVButton != 3)
         {
             Cubes[0].transform.localScale = new Vector3(inputValue.scale_A, inputValue.scale_A, 1f);
         }     
@@ -64,7 +64,7 @@ public class Scale : MonoBehaviour {
 
     void Version_3()
     {
-        Cubes[0].transform.localScale = new Vector3(_parse_User.scale_A + _parse_User.scale_B, _parse_User.scale_A + _parse_User.scale_B, 1f);
+        Cubes[0].transform.localScale = new Vector3(parseUser.scale_A + parseUser.scale_B, parseUser.scale_A + parseUser.scale_B, 1f);
         Cubes[1].SetActive(false);
         inputField_A.SetActive(false);
         inputField_B.SetActive(false);

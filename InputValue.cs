@@ -18,16 +18,16 @@ public class InputValue : MonoBehaviour
     public float scale_Y;
     public float lastV;
 
-    private Parse_User _parse_User;
+    private Parse_User parseUser;
 
     void Start()
     {
-        _parse_User = GameObject.Find("Parse_User").GetComponent<Parse_User>();
-        scale_A = _parse_User.scale_A;
-        scale_B = _parse_User.scale_B;
-        scale_X = _parse_User.scale_X;
-        scale_Y = _parse_User.scale_Y;
-        lastV = _parse_User.numVButton;
+        parseUser = GameObject.Find("Parse_User").GetComponent<Parse_User>();
+        scale_A = parseUser.scale_A;
+        scale_B = parseUser.scale_B;
+        scale_X = parseUser.scale_X;
+        scale_Y = parseUser.scale_Y;
+        lastV = parseUser.numVButton;
 
         if (GameObject.Find("InputField_A"))
         {
@@ -53,20 +53,20 @@ public class InputValue : MonoBehaviour
            slider_Y.value = scale_Y;
         }
 
-        StartCoroutine(_parse_User.SaveValue("lastV", lastV));
+        parseUser.SaveValue("lastV", lastV);
 
     }
 
     public void Input_X()
     {
         scale_X = slider_X.value;
-        StartCoroutine(_parse_User.SaveValue("scale_X", scale_X));
+        parseUser.SaveValue("scale_X", scale_X);              
     }
 
     public void Input_Y()
     {
         scale_Y = slider_Y.value;
-        StartCoroutine(_parse_User.SaveValue("scale_Y", scale_Y));
+        parseUser.SaveValue("scale_Y", scale_Y);
     }
     
     void OnGUI()
@@ -84,7 +84,7 @@ public class InputValue : MonoBehaviour
                 if (inputField_A.isFocused && inputField_A.text != "" && Input.GetKey(KeyCode.Return))
                 {
                     scale_A = newLength_A;
-                    StartCoroutine(_parse_User.SaveValue("scale_A", scale_A)); 
+                    parseUser.SaveValue("scale_A", scale_A); 
                 }
             }
             else
@@ -105,7 +105,7 @@ public class InputValue : MonoBehaviour
                 if (inputField_B.isFocused && inputField_B.text != "" && Input.GetKey(KeyCode.Return))
                 {
                     scale_B = newLength_B;
-                    StartCoroutine(_parse_User.SaveValue("scale_B", scale_B));
+                    parseUser.SaveValue("scale_B", scale_B);
                 }
             }
             else
